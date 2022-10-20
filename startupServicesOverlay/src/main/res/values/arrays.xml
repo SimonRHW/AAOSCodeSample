@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The services that needs to be started earlier in the boot sequence and in particular order.
+      Every item in this array contains a flatten component name of a service that needs to be
+      started and a list of parameters after hashtag symbol. Here's the format:
+
+      <item>com.bar.foo/.Service#bind={bind|start|startForeground},user={all|system|foreground},
+      trigger={asap,userUnlocked}</item>
+
+      bind: bind - start service with Context#bindService
+            start - start service with Context#startService
+            startForeground - start service with Context#startForegroundService
+            If service was bound it will be restarted unless it is constantly crashing.
+            The default value is 'start'
+      user: all - the service will be bound/started for system and all foreground users
+            system - the service will be started/bound only for system user (u0)
+            foreground - the service will be bound/started only for foreground users
+            The default value is 'all'
+      trigger: indicates when the service needs to be started/bound
+            asap - the service might be bound when user is not fully loaded, be careful with
+                   this value, the service also needs to have directBootAware flag set to true
+            userUnlocked - start service when user unlocked the device
+            userPostUnlocked - start service later after user unlocked. This is used when the
+                               service is not urgent and can wait to start.
+            The default value is 'userUnlocked'
+
+      If the service bound/started for foreground user it will be unbound/stopped when user
+      is no longer foreground.
+     -->
+    <array name="config_earlyStartupServices">
+        <item>com.simonren.vhal.sample/.StartUpService#bind=bind,user=foreground,trigger=userUnlocked</item>
+    </array>
+</resources>
