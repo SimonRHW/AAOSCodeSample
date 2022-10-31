@@ -13,18 +13,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.simonren.vhal.sample.ui.theme.VHALSampleTheme
 
 class MainActivity : ComponentActivity() {
+
+    lateinit var vehicleAppFocusManager: VehicleAppFocusManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         VehicleManager(this).initCar()
+        vehicleAppFocusManager = VehicleAppFocusManager(this).apply { initCar() }
         setContent {
             VHALSampleTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+                    Greeting("Automotive")
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        vehicleAppFocusManager.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        vehicleAppFocusManager.onStop()
     }
 }
 
@@ -37,6 +50,6 @@ fun Greeting(name: String) {
 @Composable
 fun DefaultPreview() {
     VHALSampleTheme {
-        Greeting("Android")
+        Greeting("Automotive")
     }
 }

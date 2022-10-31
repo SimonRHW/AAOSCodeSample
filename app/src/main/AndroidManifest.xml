@@ -71,6 +71,10 @@
     -->
     <uses-permission android:name="android.car.permission.CAR_MOCK_VEHICLE_HAL" />
 
+    <uses-feature
+        android:name="android.hardware.type.automotive"
+        android:required="true" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"

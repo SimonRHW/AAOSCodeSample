@@ -32,11 +32,11 @@ class VehicleManager(
         ) { car, ready ->
             //ready When {@code true, car service is ready and all accesses are ok.
             //Otherwise car service has crashed or killed and will be restarted.
-            Logger.info("initCar ready $ready")
+            Logger.info("VehicleManager initCar ready $ready")
             if (ready) {
                 registerCarPropertyListener(car)
                 val carUxRestrictions = carUxRestrictions(car)
-                Logger.info("initCar carUxRestrictions $carUxRestrictions")
+                Logger.info("VehicleManager initCar carUxRestrictions $carUxRestrictions")
                 carDrivingState(car)
             } else {
                 //access to car service should stop until car service is ready
