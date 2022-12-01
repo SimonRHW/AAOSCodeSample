@@ -1,4 +1,4 @@
-package com.simonren.vhal.sample
+package com.simonren.vhal.sample.util
 
 import android.util.Log
 

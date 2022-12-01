@@ -7,7 +7,7 @@ android {
     compileSdk 33
     defaultConfig {
         applicationId "com.simonren.vhal.sample"
-        minSdk 30
+        minSdk 28
         targetSdk 33
         versionCode 1
         versionName "1.0"

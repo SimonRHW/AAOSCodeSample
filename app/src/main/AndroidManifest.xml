@@ -8,13 +8,21 @@
     1、允许应用程序读取车辆的汽车基本信息。例如，它允许应用程序读取车辆的制造商，型号，型号年份，燃料容量，
             燃料类型，电动汽车电池容量，电动汽车连接类型，燃料门位置和驾驶员座位位置。
     -->
-    <uses-permission android:name="android.car.permission.CAR_INFO" /> <!-- 2、允许应用程序读取车辆动力总成信息。例如，它允许应用程序读取车辆当前档位，点火状态或停车中断状态。 -->
-    <uses-permission android:name="android.car.permission.CAR_POWERTRAIN" /> <!-- 3、允许应用程序读取车辆外部环境信息。例如，它允许应用程序读取车辆外部温度和夜间模式状态 -->
-    <uses-permission android:name="android.car.permission.CAR_EXTERIOR_ENVIRONMENT" /> <!-- 4、允许应用程序读取显示单元的距离，燃料，轮胎压力，电动汽车电池和燃料消耗。 -->
-    <uses-permission android:name="android.car.permission.READ_CAR_DISPLAY_UNITS" /> <!-- 5、允许应用程序控制显示单元的距离，燃料，轮胎压力，电动汽车电池和燃料消耗。 -->
-    <uses-permission android:name="android.car.permission.CONTROL_CAR_DISPLAY_UNITS" /> <!-- 6、允许应用程序读取车辆燃料和充电端口状态 -->
-    <uses-permission android:name="android.car.permission.CAR_ENERGY_PORTS" /> <!-- 7、允许应用程序获取当前电源策略或收到电源策略更改的通知。 -->
-    <uses-permission android:name="android.car.permission.READ_CAR_POWER_POLICY" /> <!-- 《《《《 Protection level: normal permission end 》》》》 -->
+    <uses-permission android:name="android.car.permission.CAR_INFO" />
+    <!-- 2、允许应用程序读取车辆动力总成信息。例如，它允许应用程序读取车辆当前档位，点火状态或停车中断状态。 -->
+    <uses-permission android:name="android.car.permission.CAR_POWERTRAIN" />
+    <!-- 3、允许应用程序读取车辆外部环境信息。例如，它允许应用程序读取车辆外部温度和夜间模式状态 -->
+    <uses-permission android:name="android.car.permission.CAR_EXTERIOR_ENVIRONMENT" />
+    <!-- 4、允许应用程序读取显示单元的距离，燃料，轮胎压力，电动汽车电池和燃料消耗。 -->
+    <uses-permission android:name="android.car.permission.READ_CAR_DISPLAY_UNITS" />
+    <!-- 5、允许应用程序控制显示单元的距离，燃料，轮胎压力，电动汽车电池和燃料消耗。 -->
+    <uses-permission android:name="android.car.permission.CONTROL_CAR_DISPLAY_UNITS" />
+    <!-- 6、允许应用程序读取车辆燃料和充电端口状态 -->
+    <uses-permission android:name="android.car.permission.CAR_ENERGY_PORTS" />
+    <!-- 7、允许应用程序获取当前电源策略或收到电源策略更改的通知。 -->
+    <uses-permission android:name="android.car.permission.READ_CAR_POWER_POLICY" />
+    <!-- 《《《《 Protection level: normal permission end 》》》》 -->
+
     <!-- 《《《《 Protection level: dangerous permission start 》》》》 -->
     <!-- 允许程序读取车辆速度 -->
     <uses-permission android:name="android.car.permission.CAR_SPEED" /> <!-- 允许应用程序读取车辆能源信息。 -->
@@ -86,7 +94,7 @@
         android:theme="@style/Theme.VHALSample"
         tools:targetApi="31">
         <service
-            android:name=".StartUpService"
+            android:name=".service.StartUpService"
             android:enabled="true"
             android:exported="true" />
 

@@ -1,40 +1,29 @@
-package com.simonren.vhal.sample
+package com.simonren.vhal.sample.car
 
 import android.car.Car
 import android.car.CarAppFocusManager
-import android.content.Context
-
+import com.simonren.vhal.sample.util.Logger
 
 /**
  * @author Simon
  * @desc 车机系统中应用焦点的管理和互斥操作
  */
 class VehicleAppFocusManager(
-    private val context: Context,
+    private val carProvider: CarProvider,
 ) {
-    private var mCar: Car? = null
+
     private var mCarAppFocusManager: CarAppFocusManager? = null
 
-    fun initCar() {
-        mCar = Car.createCar(
-            context, null, 0
-        ) { car, ready ->
-            //ready When {@code true, car service is ready and all accesses are ok.
-            //Otherwise car service has crashed or killed and will be restarted.
-            Logger.info("VehicleAppFocusManager initCar ready $ready")
-            if (ready) {
-                mCarAppFocusManager = car.getCarManager(Car.APP_FOCUS_SERVICE) as CarAppFocusManager
-            } else {
-                //access to car service should stop until car service is ready
-            }
-        }
-        if (mCar == null) {
-            Logger.warning("VehicleAppFocusManager initCar car connection error")
+    init {
+        carProvider.providerCar()?.let { car ->
+            mCarAppFocusManager = car.getCarManager(Car.APP_FOCUS_SERVICE) as CarAppFocusManager
+            Logger.info("VehicleAppFocusManager init")
+        } ?: let {
+            Logger.warning("car not ready")
         }
     }
 
     private val mFocusListener = CarAppFocusManager.OnAppFocusChangedListener { appType, active ->
-
 
         /**
          * Application focus has changed. Note that {@link CarAppFocusManager} instance

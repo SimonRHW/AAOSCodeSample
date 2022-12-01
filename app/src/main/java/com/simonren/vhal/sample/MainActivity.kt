@@ -10,15 +10,22 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.simonren.vhal.sample.car.CarProviderImpl
+import com.simonren.vhal.sample.car.VehicleAppFocusManager
+import com.simonren.vhal.sample.car.VehiclePropertyManager
+import com.simonren.vhal.sample.car.VehicleUxManager
 import com.simonren.vhal.sample.ui.theme.VHALSampleTheme
 
 class MainActivity : ComponentActivity() {
 
     lateinit var vehicleAppFocusManager: VehicleAppFocusManager
     override fun onCreate(savedInstanceState: Bundle?) {
+        CarProviderImpl(this).initCar {
+            VehiclePropertyManager(it)
+            VehicleUxManager(it)
+//            vehicleAppFocusManager = VehicleAppFocusManager(it)
+        }
         super.onCreate(savedInstanceState)
-        VehicleManager(this).initCar()
-        vehicleAppFocusManager = VehicleAppFocusManager(this).apply { initCar() }
         setContent {
             VHALSampleTheme {
                 // A surface container using the 'background' color from the theme
@@ -32,12 +39,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        vehicleAppFocusManager.onStart()
+//        vehicleAppFocusManager.onStart()
     }
 
     override fun onStop() {
         super.onStop()
-        vehicleAppFocusManager.onStop()
+//        vehicleAppFocusManager.onStop()
     }
 }
 
