@@ -14,15 +14,19 @@ import com.simonren.vhal.sample.util.Logger
 
 class VehiclePropertyManager(
     private var carProvider: CarProvider,
-) {
+) : VehicleManager {
 
     init {
-        carProvider.providerCar()?.let { car ->
+        carProvider.connectCar { car ->
             registerCarPropertyListener(car)
-            Logger.info("VehiclePropertyManager init registerCarPropertyListener")
-        } ?: let {
-            Logger.warning("car not ready")
+            Logger.info("VehiclePropertyManager init")
         }
+    }
+
+    private val carPropertyList = mutableListOf<VehicleProperty<String>>()
+
+    fun carPropertyList(): List<VehicleProperty<String>> {
+        return carPropertyList
     }
 
     private fun registerCarPropertyListener(car: Car) {
@@ -51,6 +55,7 @@ class VehiclePropertyManager(
                 try {
                     val value = carPropertyManager.getProperty<Any>(pid, areaId)
                     Logger.info("value :${value}")
+                    carPropertyList.add(VehicleProperty(pid, "$value"))
                 } catch (e: Exception) {
                     Logger.warning(e)
                 }

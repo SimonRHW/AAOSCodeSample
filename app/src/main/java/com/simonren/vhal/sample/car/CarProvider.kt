@@ -6,14 +6,20 @@ import android.car.Car
  * @author Simon
  * @desc
  */
+
+typealias CarReady = (Car) -> Unit
+
 interface CarProvider {
 
-    fun providerCar(): Car?
+    /**
+     * access to car service should stop until car service is ready
+     * @param readyAction car service ready todo something
+     */
+    fun connectCar(readyAction: CarReady)
 
     fun registerCarLifecycle(carAccessOwner: CarAccessOwner)
 
     interface CarAccessOwner {
-        fun available(car: Car)
         fun unavailable()
     }
 }

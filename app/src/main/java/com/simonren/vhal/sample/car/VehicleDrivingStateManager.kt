@@ -1,9 +1,10 @@
 package com.simonren.vhal.sample.car
 
+import android.car.Car
+import android.car.drivingstate.CarDrivingStateEvent
+import android.car.drivingstate.CarDrivingStateManager
 import com.simonren.vhal.sample.util.Logger
 
-//import android.car.drivingstate.CarDrivingStateEvent
-//import android.car.drivingstate.CarDrivingStateManager
 
 /**
  * @author Simon
@@ -12,62 +13,61 @@ import com.simonren.vhal.sample.util.Logger
 
 class VehicleDrivingStateManager(
     private val carProvider: CarProvider,
-) {
+) : VehicleManager {
 
     init {
-        carProvider.providerCar()?.let { car ->
-//            carDrivingState(car)
-            Logger.info("VehicleDrivingStateManager init carDrivingState")
-        } ?: let {
-            Logger.warning("car not ready")
+        carProvider.connectCar { car ->
+            Logger.info("VehicleDrivingStateManager init")
+            carDrivingState(car)
         }
     }
 
-//    private var mDrivingStateManager: CarDrivingStateManager? = null
+    private var mDrivingStateManager: CarDrivingStateManager? = null
+    private var mCurrentCarDrivingState: CarDrivingStateEvent? = null
+    var currentState: DrivingState = DrivingState.Unknown
 
-//
-//    /**
-//     *  requires android.car.permission.CAR_DRIVING_STATE   signature|privileged
-//     */
-//    private fun carDrivingState(connectedCar: Car) {
-//        try {
-//            mDrivingStateManager =
-//                connectedCar.getCarManager(Car.CAR_DRIVING_STATE_SERVICE) as CarDrivingStateManager?
-//            val currentCarDrivingState = mDrivingStateManager?.currentCarDrivingState
-//            Logger.info("carDrivingState currentState : ${currentCarDrivingState?.eventValue ?: -1}")
-//            mDrivingStateManager?.registerListener { carDrivingStateEvent ->
-//                handleDrivingStateChange(carDrivingStateEvent)
-//            }
-//        } catch (e: Exception) {
-//            Logger.warning("carDrivingState fail ${e.message}")
-//        }
-//    }
-//
-//    private fun handleDrivingStateChange(carDrivingStateEvent: CarDrivingStateEvent?) {
-//        Logger.info("handleDrivingStateChange value ${carDrivingStateEvent?.eventValue ?: -1}")
-//        carDrivingStateEvent?.run {
-//            when (this.eventValue) {
-//                CarDrivingStateEvent.DRIVING_STATE_PARKED -> {
-//
-//                }
-//                CarDrivingStateEvent.DRIVING_STATE_IDLING -> {
-//
-//                }
-//                CarDrivingStateEvent.DRIVING_STATE_MOVING -> {
-//
-//                }
-//                else -> {
-//
-//                }
-//            }
-//        }
-//    }
+    /**
+     *  requires android.car.permission.CAR_DRIVING_STATE   signature|privileged
+     */
+    private fun carDrivingState(connectedCar: Car) {
+        try {
+            mDrivingStateManager =
+                connectedCar.getCarManager(Car.CAR_DRIVING_STATE_SERVICE) as CarDrivingStateManager?
+            mCurrentCarDrivingState = mDrivingStateManager?.currentCarDrivingState
+            Logger.info("carDrivingState currentState : ${mCurrentCarDrivingState?.eventValue ?: -1}")
+            mDrivingStateManager?.registerListener { carDrivingStateEvent ->
+                handleDrivingStateChange(carDrivingStateEvent)
+            }
+        } catch (e: Exception) {
+            Logger.warning("carDrivingState fail ${e.message}")
+        }
+    }
 
-    interface DrivingState {
-        fun moving()
-        fun parked()
-        fun idling()
-        fun unknown()
+    private fun handleDrivingStateChange(carDrivingStateEvent: CarDrivingStateEvent?) {
+        Logger.info("handleDrivingStateChange value ${carDrivingStateEvent?.eventValue ?: -1}")
+        carDrivingStateEvent?.run {
+            currentState = when (this.eventValue) {
+                CarDrivingStateEvent.DRIVING_STATE_PARKED -> {
+                    DrivingState.Parked
+                }
+                CarDrivingStateEvent.DRIVING_STATE_IDLING -> {
+                    DrivingState.Idling
+                }
+                CarDrivingStateEvent.DRIVING_STATE_MOVING -> {
+                    DrivingState.Moving
+                }
+                else -> {
+                    DrivingState.Unknown
+                }
+            }
+        }
+    }
+
+    sealed class DrivingState {
+        object Moving : DrivingState()
+        object Parked : DrivingState()
+        object Idling : DrivingState()
+        object Unknown : DrivingState()
     }
 
 }

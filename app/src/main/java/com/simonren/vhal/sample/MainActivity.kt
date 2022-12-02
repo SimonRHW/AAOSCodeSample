@@ -9,29 +9,36 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.simonren.vhal.sample.car.CarProviderImpl
-import com.simonren.vhal.sample.car.VehicleAppFocusManager
-import com.simonren.vhal.sample.car.VehiclePropertyManager
-import com.simonren.vhal.sample.car.VehicleUxManager
-import com.simonren.vhal.sample.ui.theme.VHALSampleTheme
+import com.simonren.vhal.sample.car.*
+import com.simonren.vhal.sample.ui.theme.AAOSTheme
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    @Inject
+    lateinit var carProvider: CarProvider
+
+    @Inject
+    lateinit var vehicleDrivingStateManager: VehicleDrivingStateManager
+
+    @Inject
+    lateinit var vehiclePropertyManager: VehiclePropertyManager
+
+    @Inject
+    lateinit var vehicleUxRestrictionsManager: VehicleUxRestrictionsManager
+
     lateinit var vehicleAppFocusManager: VehicleAppFocusManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        CarProviderImpl(this).initCar {
-            VehiclePropertyManager(it)
-            VehicleUxManager(it)
-//            vehicleAppFocusManager = VehicleAppFocusManager(it)
-        }
         super.onCreate(savedInstanceState)
         setContent {
-            VHALSampleTheme {
+            AAOSTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background) {
-                    Greeting("Automotive")
+                    ShowVehicleProperty(VehicleProperty(286261505,"286261505"))
                 }
             }
         }
@@ -39,24 +46,19 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-//        vehicleAppFocusManager.onStart()
+        vehicleUxRestrictionsManager.currentUXRestrictionMode
+        vehicleDrivingStateManager.currentState
+        vehicleAppFocusManager = VehicleAppFocusManager(carProvider)
+        vehicleAppFocusManager.onStart()
     }
 
     override fun onStop() {
         super.onStop()
-//        vehicleAppFocusManager.onStop()
+        vehicleAppFocusManager.onStop()
     }
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    VHALSampleTheme {
-        Greeting("Automotive")
-    }
+fun ShowVehicleProperty(item: VehicleProperty<String>) {
+    Text(text = item.name() + ":" + item.desc())
 }

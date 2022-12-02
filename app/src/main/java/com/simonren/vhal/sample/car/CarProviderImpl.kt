@@ -13,7 +13,6 @@ import com.simonren.vhal.sample.util.Logger
  * @desc Car创建与声明周期管理
  */
 
-typealias CarReady = (CarProvider) -> Unit
 
 class CarProviderImpl(
     private val context: Context,
@@ -22,49 +21,58 @@ class CarProviderImpl(
     private var mCar: Car? = null
     private val carAccessOwners = mutableListOf<CarProvider.CarAccessOwner>()
 
-    fun initCar(action: CarReady) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            mCar = Car.createCar(context, object : ServiceConnection {
+    /**
+     * 0 : disconnected
+     * 1 : connecting
+     * 2 : connected
+     */
+    private var mConnectionState = 0
 
-                override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                    Logger.info("onServiceConnected name:$name, service:$service")
-                    action.invoke(this@CarProviderImpl)
-                }
-
-                override fun onServiceDisconnected(name: ComponentName?) {
-                    Logger.info("onServiceConnected name:$name")
-                    //access to car service should stop until car service is ready
-                    stopCarServiceAccess()
-                }
-            }
-            )
-            mCar?.connect()
+    override fun connectCar(readyAction: CarReady) {
+        if (mCar != null && mConnectionState == 2) {
+            readyAction.invoke(mCar!!)
         } else {
-            mCar = Car.createCar(context, null, 0
-            ) { car, ready ->
-                //ready When {@code true, car service is ready and all accesses are ok.
-                //Otherwise car service has crashed or killed and will be restarted.
-                Logger.info("initCar ready $ready")
-                if (ready) {
-                    mCar = car
-                    action.invoke(this@CarProviderImpl)
-                } else {
-                    //access to car service should stop until car service is ready
-                    stopCarServiceAccess()
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                mCar = Car.createCar(context, object : ServiceConnection {
+
+                    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                        Logger.info("onServiceConnected name:$name, service:$service")
+                        mConnectionState = 2
+                        readyAction.invoke(mCar!!)
+                    }
+
+                    override fun onServiceDisconnected(name: ComponentName?) {
+                        Logger.info("onServiceConnected name:$name")
+                        //access to car service should stop until car service is ready
+                        stopCarServiceAccess()
+                        mConnectionState = 0
+                    }
                 }
-            }
-            if (mCar == null) {
-                Logger.warning("initCar car connection error")
+                )
+                mConnectionState = 1
+                try {
+                    mCar?.connect()
+                } catch (e: IllegalStateException) {
+                    Logger.warning(e)
+                }
+            } else {
+                mCar = Car.createCar(context, null, 0
+                ) { car, ready ->
+                    //ready When {@code true, car service is ready and all accesses are ok.
+                    //Otherwise car service has crashed or killed and will be restarted.
+                    Logger.info("createCar ready $ready, mConnectionState:$mConnectionState")
+                    if (ready) {
+                        mConnectionState = 2
+                        mCar = car
+                        readyAction.invoke(mCar!!)
+                    } else {
+                        mConnectionState = 0
+                        //access to car service should stop until car service is ready
+                        stopCarServiceAccess()
+                    }
+                }
             }
         }
-    }
-
-    /**
-     *  //access to car service should stop until car service is ready
-     * @return Car?
-     */
-    override fun providerCar(): Car? {
-        return mCar
     }
 
     override fun registerCarLifecycle(carAccessOwner: CarProvider.CarAccessOwner) {

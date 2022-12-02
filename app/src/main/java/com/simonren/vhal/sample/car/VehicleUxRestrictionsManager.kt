@@ -10,20 +10,18 @@ import com.simonren.vhal.sample.util.Logger
  * @desc 驾驶模式信息读取与监听
  */
 
-class VehicleUxManager(
+class VehicleUxRestrictionsManager(
     private val carProvider: CarProvider,
-) {
+) :VehicleManager{
 
     private var mCarUxRestrictionsManager: CarUxRestrictionsManager? = null
     private var mCurrentUxRestrictions: CarUxRestrictions? = null
-    var mUXRestrictionMode: UXRestrictionMode? = null
+    var currentUXRestrictionMode: UXRestrictionMode? = null
 
     init {
-        carProvider.providerCar()?.let { car ->
-            val carUxRestrictions = carUxRestrictions(car)
-            Logger.info("VehicleUxManager init carUxRestrictions $carUxRestrictions")
-        } ?: let {
-            Logger.warning("car not ready")
+        carProvider.connectCar { car ->
+            Logger.info("VehicleUxManager init")
+            carUxRestrictions(car)
         }
     }
 
@@ -39,6 +37,7 @@ class VehicleUxManager(
             Logger.warning("carUxRestrictions fail ${e.message}")
         }
         mCarUxRestrictionsManager?.currentCarUxRestrictions?.let {
+            mCurrentUxRestrictions = it
             handleUxRestrictionsChanged(it)
         }
         return mCarUxRestrictionsManager?.currentCarUxRestrictions?.activeRestrictions ?: 0
@@ -46,9 +45,9 @@ class VehicleUxManager(
 
     private fun handleUxRestrictionsChanged(carUxRestrictions: CarUxRestrictions) {
         Logger.info("handleUxRestrictionsChanged value ${carUxRestrictions.activeRestrictions}")
-        mUXRestrictionMode = UXRestrictionMode(carUxRestrictions.activeRestrictions)
-        mUXRestrictionMode?.let {
-            // TODO:  publishMode(it)
+        currentUXRestrictionMode = UXRestrictionMode(carUxRestrictions.activeRestrictions)
+        currentUXRestrictionMode?.let {
+            // TODO:publishMode(it)
         }
     }
 

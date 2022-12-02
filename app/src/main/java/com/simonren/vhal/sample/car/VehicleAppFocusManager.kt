@@ -7,6 +7,7 @@ import com.simonren.vhal.sample.util.Logger
 /**
  * @author Simon
  * @desc 车机系统中应用焦点的管理和互斥操作
+ * 和界面声明周期绑定
  */
 class VehicleAppFocusManager(
     private val carProvider: CarProvider,
@@ -15,11 +16,9 @@ class VehicleAppFocusManager(
     private var mCarAppFocusManager: CarAppFocusManager? = null
 
     init {
-        carProvider.providerCar()?.let { car ->
+        carProvider.connectCar { car ->
             mCarAppFocusManager = car.getCarManager(Car.APP_FOCUS_SERVICE) as CarAppFocusManager
             Logger.info("VehicleAppFocusManager init")
-        } ?: let {
-            Logger.warning("car not ready")
         }
     }
 
