@@ -18,6 +18,7 @@ class VehicleUxRestrictionsManager(
     private var mCurrentUxRestrictions: CarUxRestrictions? = null
     var currentUXRestrictionMode: UXRestrictionMode? = null
 
+    //todo publish ux
     init {
         carProvider.connectCar { car ->
             Logger.info("VehicleUxManager init")

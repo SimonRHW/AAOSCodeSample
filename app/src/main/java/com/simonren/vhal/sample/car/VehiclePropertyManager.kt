@@ -6,6 +6,9 @@ import android.car.VehiclePropertyIds
 import android.car.hardware.property.CarPropertyManager
 import android.util.ArraySet
 import com.simonren.vhal.sample.util.Logger
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * @author Simon
@@ -23,11 +26,14 @@ class VehiclePropertyManager(
         }
     }
 
-    private val carPropertyList = mutableListOf<VehicleProperty<String>>()
+    private val carPropertyList = mutableListOf<VehicleProperty>()
+    private val carPropertyFlow = MutableStateFlow<List<VehicleProperty>>(emptyList())
 
-    fun carPropertyList(): List<VehicleProperty<String>> {
-        return carPropertyList
+    //todo emit vehicleProperty
+    fun carPropertyList(): StateFlow<List<VehicleProperty>> {
+        return carPropertyFlow.asStateFlow()
     }
+
 
     private fun registerCarPropertyListener(car: Car) {
         try {

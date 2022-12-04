@@ -3,12 +3,13 @@ package com.simonren.vhal.sample
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.simonren.vhal.sample.car.*
 import com.simonren.vhal.sample.ui.theme.AAOSTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,17 +19,6 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var carProvider: CarProvider
-
-    @Inject
-    lateinit var vehicleDrivingStateManager: VehicleDrivingStateManager
-
-    @Inject
-    lateinit var vehiclePropertyManager: VehiclePropertyManager
-
-    @Inject
-    lateinit var vehicleUxRestrictionsManager: VehicleUxRestrictionsManager
-
     lateinit var vehicleAppFocusManager: VehicleAppFocusManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +28,7 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background) {
-                    ShowVehicleProperty(VehicleProperty(286261505,"286261505"))
+                    ShowVehicleProperty(VehicleProperty(286261505, "286261505"))
                 }
             }
         }
@@ -46,9 +36,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        vehicleUxRestrictionsManager.currentUXRestrictionMode
-        vehicleDrivingStateManager.currentState
-        vehicleAppFocusManager = VehicleAppFocusManager(carProvider)
         vehicleAppFocusManager.onStart()
     }
 
@@ -59,6 +46,22 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ShowVehicleProperty(item: VehicleProperty<String>) {
-    Text(text = item.name() + ":" + item.desc())
+fun ShowVehicleProperty(item: VehicleProperty) {
+    Row(modifier = Modifier.padding(8.dp)) {
+        Column() {
+            Text(
+                text = item.name(),
+                color = MaterialTheme.colors.secondaryVariant,
+                style = MaterialTheme.typography.subtitle2
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Surface(shape = MaterialTheme.shapes.medium, elevation = 1.dp) {
+                Text(
+                    text = item.desc(),
+                    modifier = Modifier.padding(4.dp),
+                    style = MaterialTheme.typography.body1
+                )
+            }
+        }
+    }
 }

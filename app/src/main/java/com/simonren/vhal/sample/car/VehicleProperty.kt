@@ -1,10 +1,15 @@
 package com.simonren.vhal.sample.car
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+
 /**
  * @author Simon
  * @desc
  */
-data class VehicleProperty<T>(
+@Parcelize
+data class VehicleProperty(
     val id: Int,
-    val value: T,
-)
+    val value: String,
+) : Parcelable

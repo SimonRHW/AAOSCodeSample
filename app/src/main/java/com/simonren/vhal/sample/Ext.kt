@@ -9,10 +9,10 @@ import com.simonren.vhal.sample.car.VehicleProperty
  */
 
 
-inline fun <reified T> VehicleProperty<T>.name(): String {
+fun VehicleProperty.name(): String {
     return VehiclePropertyIds.toString(id)
 }
 
-inline fun <reified T> VehicleProperty<T>.desc(): String {
-    return "desc :${this.value}"
+fun VehicleProperty.desc(): String {
+    return "desc :${value}"
 }
