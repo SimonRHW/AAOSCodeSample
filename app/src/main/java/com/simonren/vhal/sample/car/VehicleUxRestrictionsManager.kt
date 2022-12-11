@@ -4,6 +4,9 @@ import android.car.Car
 import android.car.drivingstate.CarUxRestrictions
 import android.car.drivingstate.CarUxRestrictionsManager
 import com.simonren.vhal.sample.util.Logger
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * @author Simon
@@ -12,18 +15,22 @@ import com.simonren.vhal.sample.util.Logger
 
 class VehicleUxRestrictionsManager(
     private val carProvider: CarProvider,
-) :VehicleManager{
+) : VehicleManager {
 
     private var mCarUxRestrictionsManager: CarUxRestrictionsManager? = null
     private var mCurrentUxRestrictions: CarUxRestrictions? = null
-    var currentUXRestrictionMode: UXRestrictionMode? = null
+    var currentUXRestrictionMode: UXRestrictionMode = UXRestrictionMode()
+    private var uxRestrictionsFlow = MutableStateFlow(UXRestrictionMode())
 
-    //todo publish ux
     init {
         carProvider.connectCar { car ->
             Logger.info("VehicleUxManager init")
             carUxRestrictions(car)
         }
+    }
+
+    fun uxRestrictionsFlow(): StateFlow<UXRestrictionMode> {
+        return uxRestrictionsFlow.asStateFlow()
     }
 
     private fun carUxRestrictions(connectedCar: Car): Int {
@@ -47,12 +54,12 @@ class VehicleUxRestrictionsManager(
     private fun handleUxRestrictionsChanged(carUxRestrictions: CarUxRestrictions) {
         Logger.info("handleUxRestrictionsChanged value ${carUxRestrictions.activeRestrictions}")
         currentUXRestrictionMode = UXRestrictionMode(carUxRestrictions.activeRestrictions)
-        currentUXRestrictionMode?.let {
-            // TODO:publishMode(it)
+        currentUXRestrictionMode.let {
+            uxRestrictionsFlow.tryEmit(it)
         }
     }
 
-    class UXRestrictionMode(val currentMode: Int) {
+    class UXRestrictionMode(val currentMode: Int = CarUxRestrictions.UX_RESTRICTIONS_BASELINE) {
 
         /**
          * @see CarUxRestrictions

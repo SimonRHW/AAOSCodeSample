@@ -19,6 +19,9 @@ class VehiclePropertyManager(
     private var carProvider: CarProvider,
 ) : VehicleManager {
 
+    private val carPropertyList = mutableListOf<VehicleProperty>()
+    private var carPropertyFlow = MutableStateFlow<List<VehicleProperty>>(emptyList())
+
     init {
         carProvider.connectCar { car ->
             registerCarPropertyListener(car)
@@ -26,14 +29,15 @@ class VehiclePropertyManager(
         }
     }
 
-    private val carPropertyList = mutableListOf<VehicleProperty>()
-    private val carPropertyFlow = MutableStateFlow<List<VehicleProperty>>(emptyList())
-
-    //todo emit vehicleProperty
-    fun carPropertyList(): StateFlow<List<VehicleProperty>> {
+    fun vehiclePropertyFlow(): StateFlow<List<VehicleProperty>> {
         return carPropertyFlow.asStateFlow()
     }
 
+    fun getProperty(id: Int): VehicleProperty {
+        return carPropertyList.first {
+            it.id == id
+        }
+    }
 
     private fun registerCarPropertyListener(car: Car) {
         try {
@@ -66,6 +70,7 @@ class VehiclePropertyManager(
                     Logger.warning(e)
                 }
             }
+            carPropertyFlow.tryEmit(carPropertyList.toList())
         } catch (e: Exception) {
             Logger.warning("registerCarPropertyListener :${e.message}")
         }

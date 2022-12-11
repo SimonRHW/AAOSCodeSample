@@ -4,6 +4,9 @@ import android.car.Car
 import android.car.drivingstate.CarDrivingStateEvent
 import android.car.drivingstate.CarDrivingStateManager
 import com.simonren.vhal.sample.util.Logger
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 
 /**
@@ -15,6 +18,11 @@ class VehicleDrivingStateManager(
     private val carProvider: CarProvider,
 ) : VehicleManager {
 
+    private var mDrivingStateManager: CarDrivingStateManager? = null
+    private var mCurrentCarDrivingState: CarDrivingStateEvent? = null
+    var currentState: DrivingState = DrivingState.Unknown
+    private var drivingStateFlow = MutableStateFlow<DrivingState>(DrivingState.Unknown)
+
     init {
         carProvider.connectCar { car ->
             Logger.info("VehicleDrivingStateManager init")
@@ -22,9 +30,9 @@ class VehicleDrivingStateManager(
         }
     }
 
-    private var mDrivingStateManager: CarDrivingStateManager? = null
-    private var mCurrentCarDrivingState: CarDrivingStateEvent? = null
-    var currentState: DrivingState = DrivingState.Unknown
+    fun drivingStateFlow(): StateFlow<DrivingState> {
+        return drivingStateFlow.asStateFlow()
+    }
 
     /**
      *  requires android.car.permission.CAR_DRIVING_STATE   signature|privileged
@@ -60,6 +68,7 @@ class VehicleDrivingStateManager(
                     DrivingState.Unknown
                 }
             }
+            drivingStateFlow.tryEmit(currentState)
         }
     }
 

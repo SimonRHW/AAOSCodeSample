@@ -11,7 +11,7 @@ import com.simonren.vhal.sample.util.Logger
  */
 class VehicleAppFocusManager(
     private val carProvider: CarProvider,
-) {
+) : VehicleManager {
 
     private var mCarAppFocusManager: CarAppFocusManager? = null
 

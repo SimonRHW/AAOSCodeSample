@@ -22,7 +22,7 @@ class UXRestrictionViewModel @Inject constructor(
     fun uxRestrictionMode(): LiveData<VehicleUxRestrictionsManager.UXRestrictionMode> = _uxRestrictionMode
 
     init {
-        vehicleUxRestrictionsManager.currentUXRestrictionMode?.let {
+        vehicleUxRestrictionsManager.currentUXRestrictionMode.let {
             _uxRestrictionMode.postValue(it)
         }
     }
