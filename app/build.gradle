@@ -66,7 +66,7 @@ android {
     //https://stackoverflow.com/questions/72517218/android-car-package-is-unavailable-in-android-studio/73137467?from_wecom=1#73137467
     //https://issuetracker.google.com/issues/234749386?from_wecom=1
 
-    //useLibrary 'android.car'
+//    useLibrary 'android.car'
 }
 
 dependencies {

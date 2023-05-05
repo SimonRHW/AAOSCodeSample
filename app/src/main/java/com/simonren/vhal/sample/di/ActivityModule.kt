@@ -1,7 +1,6 @@
 package com.simonren.vhal.sample.di
 
 import android.app.Activity
-import android.car.CarAppFocusManager
 import android.view.Window
 import com.simonren.vhal.sample.car.CarProvider
 import com.simonren.vhal.sample.car.VehicleAppFocusManager

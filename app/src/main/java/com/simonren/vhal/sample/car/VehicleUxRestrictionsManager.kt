@@ -48,7 +48,8 @@ class VehicleUxRestrictionsManager(
             mCurrentUxRestrictions = it
             handleUxRestrictionsChanged(it)
         }
-        return mCarUxRestrictionsManager?.currentCarUxRestrictions?.activeRestrictions ?: 0
+        return mCarUxRestrictionsManager?.currentCarUxRestrictions?.activeRestrictions
+            ?: CarUxRestrictions.UX_RESTRICTIONS_BASELINE
     }
 
     private fun handleUxRestrictionsChanged(carUxRestrictions: CarUxRestrictions) {
